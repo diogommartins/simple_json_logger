@@ -108,10 +108,11 @@ class LoggerTests(unittest.TestCase):
         mocked_stream = Mock()
         mocked_logger = JsonLogger(stream=mocked_stream)
 
-        mocked_logger.info("FOO")
+        info_msg = "Se o pensamento nasce livre, aqui ele não é não"
+        mocked_logger.info(info_msg)
         write_msg_call, write_line_break_call = mocked_stream.write.call_args_list
         self.assertEqual(write_line_break_call, call('\n'))
-        self.assertIn("FOO", write_msg_call[0][0])
+        self.assertIn(info_msg, write_msg_call[0][0])
 
         mocked_stream = Mock()
         mocked_logger = JsonLogger(stream=mocked_stream)
