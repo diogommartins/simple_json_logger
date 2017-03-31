@@ -4,6 +4,7 @@ import json
 import inspect
 from datetime import datetime
 from io import StringIO
+from unittest.mock import Mock, call
 
 from simple_json_logger import JsonLogger
 from freezegun import freeze_time
@@ -85,4 +86,18 @@ class LoggerTests(unittest.TestCase):
                       container=exc_traceback)
 
     def test_it_replaces_default_handlers_if_a_stream_is_provided(self):
-        raise NotImplementedError
+        mocked_stream = Mock()
+        mocked_logger = JsonLogger(stream=mocked_stream)
+
+        mocked_logger.info("FOO")
+        write_msg_call, write_line_break_call = mocked_stream.write.call_args_list
+        self.assertEqual(write_line_break_call, call('\n'))
+        self.assertIn("FOO", write_msg_call[0][0])
+
+        mocked_stream = Mock()
+        mocked_logger = JsonLogger(stream=mocked_stream)
+
+        mocked_logger.critical("BAR")
+        write_msg_call, write_line_break_call = mocked_stream.write.call_args_list
+        self.assertEqual(write_line_break_call, call('\n'))
+        self.assertIn("BAR", write_msg_call[0][0])
