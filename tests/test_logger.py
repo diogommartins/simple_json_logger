@@ -4,7 +4,7 @@ import json
 import inspect
 from datetime import datetime
 from io import StringIO
-from unittest.mock import Mock, call
+from unittest.mock import Mock, call, patch
 
 from simple_json_logger import JsonLogger
 from freezegun import freeze_time
@@ -101,3 +101,24 @@ class LoggerTests(unittest.TestCase):
         write_msg_call, write_line_break_call = mocked_stream.write.call_args_list
         self.assertEqual(write_line_break_call, call('\n'))
         self.assertIn("BAR", write_msg_call[0][0])
+
+    def test_it_calls_stdout_for_low_levels_and_stderr_for_high_levels(self):
+        stdout_patch = patch("sys.stdout")
+        stderr_patch = patch("sys.stderr")
+        stdout = stdout_patch.start()
+        stderr = stderr_patch.start()
+
+        logger = JsonLogger()
+
+        logger.debug("debug")
+        logger.info("info")
+
+        logger.warning("warning")
+        logger.error("error")
+        logger.critical("critical")
+
+        self.assertEqual(stdout.write.call_count, 4)
+        self.assertEqual(stderr.write.call_count, 6)
+
+        stdout.stop()
+        stderr.stop()
