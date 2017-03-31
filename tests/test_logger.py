@@ -4,7 +4,11 @@ import json
 import inspect
 from datetime import datetime
 from io import StringIO
-from unittest.mock import Mock, call, patch
+try:
+    from unittest.mock import Mock, call, patch
+except ImportError:
+    # python 2.7
+    from mock import Mock, call, patch
 
 from simple_json_logger import JsonLogger
 from freezegun import freeze_time
@@ -18,7 +22,7 @@ class LoggerTests(unittest.TestCase):
 
     def test_it_logs_valid_json_string_if_message_is_json_serializeable(self):
         message = {
-            'info': 'Se tem permissão, tamo dando sarrada',
+            'info': 'Se tem permissao, tamo dando sarrada',
             'msg': {
                 'foo': 'bar',
                 'baz': 'blu'
@@ -72,7 +76,7 @@ class LoggerTests(unittest.TestCase):
         try:
             raise Exception(exception_message)
         except Exception:
-            self.logger.exception("Aqui nao é GTA, eh pior, eh Grajau")
+            self.logger.exception("Aqui nao eh GTA, eh pior, eh Grajau")
 
         logged_content = self.buffer.getvalue()
         json_log = json.loads(logged_content)
@@ -108,7 +112,7 @@ class LoggerTests(unittest.TestCase):
         mocked_stream = Mock()
         mocked_logger = JsonLogger(stream=mocked_stream)
 
-        info_msg = "Se o pensamento nasce livre, aqui ele não é não"
+        info_msg = "Se o pensamento nasce livre, aqui ele nao eh nao"
         mocked_logger.info(info_msg)
         write_msg_call, write_line_break_call = mocked_stream.write.call_args_list
         self.assertEqual(write_line_break_call, call('\n'))

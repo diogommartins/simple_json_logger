@@ -20,7 +20,7 @@ class JsonLogger(logging.Logger):
         :type level: int
         :type serializer: callable
         """
-        super().__init__(name, level)
+        super(JsonLogger, self).__init__(name, level)
         self.serializer = serializer
 
         if stream:
@@ -46,7 +46,7 @@ class JsonLogger(logging.Logger):
         """
         return self._make_handler(level=logging.WARNING, stream=sys.stderr)
 
-    def _make_handler(self, level, stream) -> 'logging.StreamHandler':
+    def _make_handler(self, level, stream):
         """
         :rtype: logging.StreamHandler
         """
