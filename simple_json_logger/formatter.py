@@ -1,11 +1,13 @@
 import logging
-
+from logging import _levelToName
 import datetime
 import traceback
 from inspect import istraceback
 
 
 class JsonFormatter(logging.Formatter):
+    level_to_name_mapping = _levelToName
+
     def __init__(self, serializer):
         super().__init__()
         self.serializer = serializer
@@ -27,7 +29,7 @@ class JsonFormatter(logging.Formatter):
             'logged_at': datetime.datetime.now().isoformat(),
             'line_number': record.lineno,
             'function': record.funcName,
-            'level': record.levelno,
+            'level': self.level_to_name_mapping[record.levelno],
             'path': record.pathname
         }
 
