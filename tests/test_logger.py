@@ -85,6 +85,25 @@ class LoggerTests(unittest.TestCase):
         self.assertIn(member=current_func_name,
                       container=exc_traceback)
 
+    def test_it_logs_datetime_objects(self):
+        message = {
+            'date': datetime.now().date(),
+            'time': datetime.now().time(),
+            'datetime': datetime.now()
+        }
+
+        self.logger.error(message)
+
+        logged_content = self.buffer.getvalue()
+        json_log = json.loads(logged_content)
+
+        expected_output = {
+            'date': message['date'].isoformat(),
+            'time': message['time'].isoformat(),
+            'datetime': message['datetime'].isoformat()
+        }
+        self.assertDictEqual(json_log['msg'], expected_output)
+
     def test_it_replaces_default_handlers_if_a_stream_is_provided(self):
         mocked_stream = Mock()
         mocked_logger = JsonLogger(stream=mocked_stream)
