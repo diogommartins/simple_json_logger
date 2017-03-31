@@ -53,7 +53,7 @@ def foo():
 foo()
 >>> {"msg": "I'm a json in stdout !", "logged_at": "2017-03-31T02:37:46.616014", "line_number": 7, "function": "foo", "level": 10, "path": "/Volumes/partition2/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
 >>> {"msg": "I'm a json in stdout !", "logged_at": "2017-03-31T02:37:46.616145", "line_number": 8, "function": "foo", "level": 20, "path": "/Volumes/partition2/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
->>> {"msg": "I'm a json in stderr !", "logged_at": "2017-03-31T02:37:46.616225", "line_number": 9, "function": "foo", "level": 30, "path": "/Volumes/partition2/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
+>>> {"msg": "Wow i'm json in stderr !", "logged_at": "2017-03-31T02:37:46.616225", "line_number": 9, "function": "foo", "level": 30, "path": "/Volumes/partition2/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
 >>> {"msg": "Wow i'm json in stderr !", "logged_at": "2017-03-31T02:37:46.616298", "line_number": 11, "function": "foo", "level": 40, "path": "/Volumes/partition2/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
 >>> {"msg": "Wow i'm json in stderr !", "logged_at": "2017-03-31T02:37:46.616369", "line_number": 12, "function": "foo", "level": 50, "path": "/Volumes/partition2/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
 ```
