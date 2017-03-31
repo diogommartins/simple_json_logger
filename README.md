@@ -73,6 +73,23 @@ foo()
 
  ```
 
+### It logs everything
+
+``` python
+from simple_json_logger import JsonLogger
+from datetime import datetime
+
+logger = JsonLogger()
+logger.info({
+    'date_objects': datetime.now(),
+    'exceptions': Exception(),
+    'types': JsonLogger
+})
+>>> {"msg": {"date_objects": "2017-03-31T03:14:38.198535", "exceptions": "Exception: ", "types": "<class 'simple_json_logger.logger.JsonLogger'>"}, "logged_at": "2017-03-31T03:14:38.198723", "line_number": 8, "function": "<module>", "level": 20, "path": "/Volumes/partition2/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
+```
+
+
+
 ## Depencencies
 
 Has none
