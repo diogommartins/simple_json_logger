@@ -88,7 +88,10 @@ logger.info({
 >>> {"msg": {"date_objects": "2017-03-31T03:17:33.898880", "exceptions": "Exception: 'Boooom'", "types": "<class 'simple_json_logger.logger.JsonLogger'>"}, "logged_at": "2017-03-31T03:17:33.900136", "line_number": 8, "function": "<module>", "level": "INFO", "path": "/Volumes/partition2/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
 ```
 
+## Compatibility
 
+It is granted to work and tested on python >=3.3. Currently supports
+python 2.7, but compatibility may break at any moment.
 
 ## Depencencies
 
