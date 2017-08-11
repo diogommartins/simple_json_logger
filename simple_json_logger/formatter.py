@@ -37,6 +37,8 @@ class JsonFormatter(logging.Formatter):
             'file_path': record.pathname
         }
 
+        if record.extra:
+            msg.update(record.extra)
         if record.exc_info:
             msg['exc_info'] = record.exc_info
         if record.exc_text:

@@ -10,6 +10,14 @@ class StdoutFilter(logging.Filter):
         return rec.levelno in (logging.DEBUG, logging.INFO)
 
 
+class LogRecord(logging.LogRecord):
+    def __init__(self, name, level, pathname, lineno,
+                 msg, args, exc_info, func=None, sinfo=None, **kwargs):
+        super(LogRecord, self).__init__(name, level, pathname, lineno, msg,
+                                        args, exc_info, func, sinfo, **kwargs)
+        self.extra = kwargs.get('extra')
+
+
 class JsonLogger(logging.Logger):
     def __init__(self, name='json_logger',
                  level=logging.DEBUG,
@@ -55,3 +63,8 @@ class JsonLogger(logging.Logger):
         handler.setFormatter(JsonFormatter(self.serializer))
 
         return handler
+
+    def makeRecord(self, name, level, fn, lno, msg, args, exc_info,
+                   func=None, extra=None, sinfo=None):
+        return LogRecord(name, level, fn, lno, msg, args, exc_info, func, sinfo,
+                         extra=extra)

@@ -123,22 +123,35 @@ class LoggerTests(unittest.TestCase):
         self.assertIn("BAR", write_msg_call[0][0])
 
     def test_it_calls_stdout_for_low_levels_and_stderr_for_high_levels(self):
-        stdout_patch = patch("sys.stdout")
-        stderr_patch = patch("sys.stderr")
-        stdout = stdout_patch.start()
-        stderr = stderr_patch.start()
+        with patch("sys.stdout") as stdout:
+            logger = JsonLogger()
 
-        logger = JsonLogger()
+            logger.debug("debug")
+            logger.info("info")
 
-        logger.debug("debug")
-        logger.info("info")
+            self.assertEqual(stdout.write.call_count, 4)
 
-        logger.warning("warning")
-        logger.error("error")
-        logger.critical("critical")
+    def test_it_calls_stderr_for_high_log_leves(self):
+        with patch("sys.stderr") as stderr:
+            logger = JsonLogger()
 
-        self.assertEqual(stdout.write.call_count, 4)
-        self.assertEqual(stderr.write.call_count, 6)
+            logger.warning("warning")
+            logger.error("error")
+            logger.critical("critical")
 
-        stdout.stop()
-        stderr.stop()
+            self.assertEqual(stderr.write.call_count, 6)
+
+    def test_extra_param_adds_content_to_document_root(self):
+        with patch("sys.stdout") as stdout:
+            logger = JsonLogger()
+
+            extra = {
+                'artist': "Joanne Shaw Taylor",
+                'song': 'Wild is the wind'
+            }
+            logger.info("Music", extra=extra)
+
+            self.assertEqual(stdout.write.call_count, 2)
+            log_content = stdout.write.call_args_list[0][0][0]
+
+            self.assertDictContainsSubset(extra, json.loads(log_content))
