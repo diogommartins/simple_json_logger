@@ -27,7 +27,7 @@ class JsonFormatter(logging.Formatter):
             return "Exception: %s" % str(obj)
         return str(obj)
 
-    def format(self, record, extra=None):
+    def format(self, record):
         msg = {
             'msg': record.msg,
             'logged_at': datetime.datetime.now().isoformat(),
