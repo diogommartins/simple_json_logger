@@ -159,3 +159,62 @@ class LoggerTests(unittest.TestCase):
             log_content = stdout.write.call_args_list[0][0][0]
 
             self.assertDictContainsSubset(extra, json.loads(log_content))
+
+    def test_flatten_param_adds_message_to_document_root(self):
+        with patch("sys.stdout") as stdout:
+            logger = JsonLogger()
+
+            message = {
+                'artist': 'Dave Meniketti',
+                'song': 'Loan me a dime'
+            }
+            logger.info(message, flatten=True)
+
+            self.assertEqual(stdout.write.call_count, 2)
+            logged_content = json.loads(stdout.write.call_args_list[0][0][0])
+
+            self.assertDictContainsSubset(message, logged_content)
+
+    def test_flatten_method_parameter_overwrites_default_attributes(self):
+        with patch("sys.stdout") as stdout:
+            logger = JsonLogger()
+
+            message = {
+                'logger_at': 'Yesterday'
+            }
+            logger.info(message, flatten=True)
+
+            self.assertEqual(stdout.write.call_count, 2)
+            logged_content = json.loads(stdout.write.call_args_list[0][0][0])
+
+            self.assertDictContainsSubset(message, logged_content)
+
+    def test_flatten_method_parameter_does_nothing_is_message_isnt_a_dict(self):
+        with patch("sys.stdout") as stdout:
+            logger = JsonLogger()
+
+            message = "I'm not a dict :("
+            logger.info(message, flatten=True)
+
+            self.assertEqual(stdout.write.call_count, 2)
+            logged_content = json.loads(stdout.write.call_args_list[0][0][0])
+
+            self.assertEqual(message, logged_content['msg'])
+
+    def test_flatten_instance_parameter_adds_messages_to_document_root(self):
+        self.logger.flatten = True
+
+        message = {'The Jeff Healey Band': 'Cruel Little Number'}
+        self.logger.info(message)
+        logged_content = json.loads(self.buffer.getvalue())
+
+        self.assertDictContainsSubset(message, logged_content)
+
+    def test_flatten_instance_parameter_overwrites_default_attributes(self):
+        self.logger.flatten = True
+
+        message = {'logger_at': 'Yesterday'}
+        self.logger.info(message)
+        logged_content = json.loads(self.buffer.getvalue())
+
+        self.assertDictContainsSubset(message, logged_content)
