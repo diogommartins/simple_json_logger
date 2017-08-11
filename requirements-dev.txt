@@ -1,2 +1,4 @@
 freezegun==0.3.8
 pytest
+pytest-cov
+codecov
