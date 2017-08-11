@@ -90,7 +90,8 @@ logger.info({
 
 ## Compatibility
 
-It is granted to work and tested on python >=3.3.
+It is granted to work and tested on python >=3.3. Even through it's
+untested, it probably works on python 2.7, but use at your own risk.
 
 ## Depencencies
 
