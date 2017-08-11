@@ -34,7 +34,7 @@ class JsonFormatter(logging.Formatter):
             'line_number': record.lineno,
             'function': record.funcName,
             'level': self.level_to_name_mapping[record.levelno],
-            'path': record.pathname
+            'file_path': record.pathname
         }
 
         if record.exc_info:
