@@ -9,7 +9,7 @@ python:
 
 install: "pip install -r requirements-dev.txt"
 
-script: pytest -v
+script: py.test -v
 
 #deploy:
 #  provider: pypi
