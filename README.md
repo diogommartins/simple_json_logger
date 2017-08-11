@@ -26,7 +26,7 @@ def foo():
     logger.info("Hello world!")
 
 foo()
->>> {"msg": "Hello world!", "logged_at": "2017-03-31T02:10:16.786569", "line_number": 6, "function": "foo", "level": "INFO", "path": "/Volumes/partition2/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
+>>> {"msg": "Hello world!", "logged_at": "2017-03-31T02:10:16.786569", "line_number": 6, "function": "foo", "level": "INFO", "file_path": "/Volumes/partition2/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
 ```
 
 
@@ -51,11 +51,11 @@ def foo():
     logger.critical("Wow i'm json in stderr !")
 
 foo()
->>> {"msg": "I'm a json in stdout !", "logged_at": "2017-03-31T02:37:46.616014", "line_number": 7, "function": "foo", "level": "DEBUG", "path": "/Volumes/partition2/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
->>> {"msg": "I'm a json in stdout !", "logged_at": "2017-03-31T02:37:46.616145", "line_number": 8, "function": "foo", "level": "INFO", "path": "/Volumes/partition2/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
->>> {"msg": "Wow i'm json in stderr !", "logged_at": "2017-03-31T02:37:46.616225", "line_number": 9, "function": "foo", "level": "WARNING", "path": "/Volumes/partition2/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
->>> {"msg": "Wow i'm json in stderr !", "logged_at": "2017-03-31T02:37:46.616298", "line_number": 11, "function": "foo", "level": "ERROR", "path": "/Volumes/partition2/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
->>> {"msg": "Wow i'm json in stderr !", "logged_at": "2017-03-31T02:37:46.616369", "line_number": 12, "function": "foo", "level":  "CRITICAL", "path": "/Volumes/partition2/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
+>>> {"msg": "I'm a json in stdout !", "logged_at": "2017-03-31T02:37:46.616014", "line_number": 7, "function": "foo", "level": "DEBUG", "file_path": "/Volumes/partition2/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
+>>> {"msg": "I'm a json in stdout !", "logged_at": "2017-03-31T02:37:46.616145", "line_number": 8, "function": "foo", "level": "INFO", "file_path": "/Volumes/partition2/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
+>>> {"msg": "Wow i'm json in stderr !", "logged_at": "2017-03-31T02:37:46.616225", "line_number": 9, "function": "foo", "level": "WARNING", "file_path": "/Volumes/partition2/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
+>>> {"msg": "Wow i'm json in stderr !", "logged_at": "2017-03-31T02:37:46.616298", "line_number": 11, "function": "foo", "level": "ERROR", "file_path": "/Volumes/partition2/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
+>>> {"msg": "Wow i'm json in stderr !", "logged_at": "2017-03-31T02:37:46.616369", "line_number": 12, "function": "foo", "level":  "CRITICAL", "file_path": "/Volumes/partition2/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
 ```
 
  You may override that behavior by passing your own `stream` handler.
@@ -69,7 +69,7 @@ foo()
  logger = JsonLogger(stream=sys.stdout)
 
  logger.error("I'll always log to stdout!!!")
- >>> {"msg": "I'll always log to stdout!!!", "logged_at": "2017-03-31T02:43:44.883072", "line_number": 5, "function": "<module>", "level": "ERROR", "path": "/Volumes/partition2/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
+ >>> {"msg": "I'll always log to stdout!!!", "logged_at": "2017-03-31T02:43:44.883072", "line_number": 5, "function": "<module>", "level": "ERROR", "file_path": "/Volumes/partition2/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
 
  ```
 
@@ -85,7 +85,7 @@ logger.info({
     'exceptions': KeyError("Boooom"),
     'types': JsonLogger
 })
->>> {"msg": {"date_objects": "2017-03-31T03:17:33.898880", "exceptions": "Exception: 'Boooom'", "types": "<class 'simple_json_logger.logger.JsonLogger'>"}, "logged_at": "2017-03-31T03:17:33.900136", "line_number": 8, "function": "<module>", "level": "INFO", "path": "/Volumes/partition2/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
+>>> {"msg": {"date_objects": "2017-03-31T03:17:33.898880", "exceptions": "Exception: 'Boooom'", "types": "<class 'simple_json_logger.logger.JsonLogger'>"}, "logged_at": "2017-03-31T03:17:33.900136", "line_number": 8, "function": "<module>", "level": "INFO", "file_path": "/Volumes/partition2/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
 ```
 
 ## Compatibility
