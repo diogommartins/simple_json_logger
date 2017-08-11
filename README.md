@@ -1,3 +1,5 @@
+[TOC]
+
 # Simple Json Logger
 [![Build Status](https://travis-ci.org/diogommartins/simple_json_logger.svg?branch=master)](https://travis-ci.org/diogommartins/simple_json_logger)
 
@@ -93,7 +95,9 @@ logger.info({
 
 By default, everything passed to the log methods is inserted inside
 the `msg` root attribute, but sometimes we want to add content to the root level.
-For this, we may use the `extra` parameter.
+For this, we may use the `extra` or `flatten` parameters.
+
+#### Extra
 
 ``` python
 from simple_json_logger import JsonLogger
@@ -127,6 +131,53 @@ logger.info("I'm a simple log")
 
 logger.info("I'm a simple log", extra={'logged_at': 'Yesterday'})
 >>> {"msg": "I'm a simple log", "logged_at": "Yesterday", "line_number": 6, "function": "<module>", "level": "INFO", "path": "/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
+```
+
+#### Flatten
+
+Alternatively, this behavior may be achieved using `flatten`. Which is
+available both as a method parameter and instance attribute.
+
+As an instance attribute, every call to a log method would "flat" the dict attributes.
+
+``` python
+from simple_json_logger import JsonLogger
+
+
+logger = JsonLogger(flatten=True)
+
+logger.info({"status_code": 200, "response_time": 0.00534534})
+>>> {"status_code": 200, "response_time": 0.534534, "logged_at": "2017-08-11T16:18:58.446985", "line_number": 6, "function": "<module>", "level": "INFO", "path": "/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
+
+logger.error({"status_code": 404, "response_time": 0.00134534})
+>>> {"status_code": 200, "response_time": 0.534534, "logged_at": "2017-08-11T16:18:58.446986", "line_number": 6, "function": "<module>", "level": "INFO", "path": "/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
+```
+
+As a method parameter, only the specific call would add the content to the root.
+
+``` python
+from simple_json_logger import JsonLogger
+
+
+logger = JsonLogger()
+
+logger.info({"status_code": 200, "response_time": 0.00534534}, flatten=True)
+>>> {"logged_at": "2017-08-11T16:23:16.312441", "line_number": 6, "function": "<module>", "level": "INFO", "path": "/Users/diogo/PycharmProjects/simple_json_logger/bla.py", "status_code": 200, "response_time": 0.00534534}
+
+logger.error({"status_code": 404, "response_time": 0.00134534})
+>>> {"logged_at": "2017-08-11T16:23:16.312618", "line_number": 8, "function": "<module>", "level": "ERROR", "path": "/Users/diogo/PycharmProjects/simple_json_logger/bla.py", "msg": {"status_code": 404, "response_time": 0.00134534}}
+```
+
+**Warning**: It is possible to overwrite keys that are already present at root level.
+
+``` python
+from simple_json_logger import JsonLogger
+
+
+logger = JsonLogger()
+
+logger.info({'logged_at': 'Yesterday'}, flatten=True)
+>>> {"logged_at": "Yesterday", "line_number": 6, "function": "<module>", "level": "INFO", "path": "/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
 ```
 
 ## Compatibility

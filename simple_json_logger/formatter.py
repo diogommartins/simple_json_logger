@@ -29,13 +29,19 @@ class JsonFormatter(logging.Formatter):
 
     def format(self, record):
         msg = {
-            'msg': record.msg,
             'logged_at': datetime.datetime.now().isoformat(),
             'line_number': record.lineno,
             'function': record.funcName,
             'level': self.level_to_name_mapping[record.levelno],
             'file_path': record.pathname
         }
+        if record.flatten:
+            if isinstance(record.msg, dict):
+                msg.update(record.msg)
+            else:
+                msg['msg'] = record.msg
+        else:
+            msg['msg'] = record.msg
 
         if record.extra:
             msg.update(record.extra)
