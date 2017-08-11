@@ -167,12 +167,12 @@ class LoggerTests(unittest.TestCase):
         self.assertDictContainsSubset(message, logged_content)
 
     def test_flatten_method_parameter_overwrites_default_attributes(self):
-        message = {'logger_at': 'Yesterday'}
+        message = {'logged_at': 'Yesterday'}
 
         self.logger.info(message, flatten=True)
         logged_content = json.loads(self.buffer.getvalue())
 
-        self.assertDictContainsSubset(message, logged_content)
+        self.assertEqual(message['logged_at'], logged_content['logged_at'])
 
     def test_flatten_method_parameter_does_nothing_is_message_isnt_a_dict(self):
         message = "I'm not a dict :("
@@ -194,8 +194,8 @@ class LoggerTests(unittest.TestCase):
     def test_flatten_instance_parameter_overwrites_default_attributes(self):
         self.logger.flatten = True
 
-        message = {'logger_at': 'Yesterday'}
+        message = {'logged_at': 'Yesterday'}
         self.logger.info(message)
         logged_content = json.loads(self.buffer.getvalue())
 
-        self.assertDictContainsSubset(message, logged_content)
+        self.assertEqual(message['logged_at'], logged_content['logged_at'])
