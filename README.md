@@ -1,5 +1,6 @@
 # Simple Json Logger
 [![Build Status](https://travis-ci.org/diogommartins/simple_json_logger.svg?branch=master)](https://travis-ci.org/diogommartins/simple_json_logger)
+[![codecov](https://codecov.io/gh/diogommartins/simple_json_logger/branch/master/graph/badge.svg)](https://codecov.io/gh/diogommartins/simple_json_logger)
 
 A simple, thin layer, drop-in replacement of python built-in Logger from
 the `logging` module, that grants to always log valid json output.
