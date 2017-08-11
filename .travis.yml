@@ -1,0 +1,19 @@
+language: python
+python:
+  - "2.7"
+  - "3.3"
+  - "3.4"
+  - "3.5"
+  - "3.6"
+  - "nightly" # currently points to 3.7-dev
+
+install: "pip install -r requirements-dev.txt"
+
+script: pytest -v
+
+#deploy:
+#  provider: pypi
+#  user: "Your username"
+#  password: "Your password"
+
+# travis encrypt --add deploy.password
