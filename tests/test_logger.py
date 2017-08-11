@@ -145,3 +145,17 @@ class LoggerTests(unittest.TestCase):
 
             self.assertEqual(stderr.write.call_count, 6)
 
+    def test_extra_param_adds_content_to_document_root(self):
+        with patch("sys.stdout") as stdout:
+            logger = JsonLogger()
+
+            extra = {
+                'artist': "Joanne Shaw Taylor",
+                'song': 'Wild is the wind'
+            }
+            logger.info("Music", extra=extra)
+
+            self.assertEqual(stdout.write.call_count, 2)
+            log_content = stdout.write.call_args_list[0][0][0]
+
+            self.assertDictContainsSubset(extra, json.loads(log_content))
