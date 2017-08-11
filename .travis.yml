@@ -1,0 +1,20 @@
+language: python
+python:
+  - "3.3"
+  - "3.4"
+  - "3.5"
+  - "3.6"
+  - "nightly" # currently points to 3.7-dev
+  - "pypy3"
+
+install: "pip install -r requirements-dev.txt"
+
+script: py.test -v
+
+deploy:
+  provider: pypi
+  user: "diogommartins"
+  password:
+    secure: "d7dbqkmFGW2HT6mDU6xSbITpcwQeuXM8omhM1mpj0i6m39VNHhmcjHY9lwO7arHkVGX12RG8FWe+uQqGFe4c0l8c6irjYFwVgpQVYmyOtaZUprNjsdnefD4mD5VF50oNpMi5mxdQS+SYxWkNIPJwwBB4Y9c9S+CnV9pbsRsvV681B6V/EQWVNpOMzk351tphxNyEd5CNU6ccU2sVaOjMOr1s3G3aY7RI6b2q+Z48bphrp8lGAT4pd12d2IbjjW5rX7+hcYG9o9/64F9U6i8CKKMgp6CzRETPc5REpqmIqD83f0YSiwGAKKPoB8rjLFl4wbiwrFDtDLqcT3oBslx0NJ7VhHL+jJUuXzqFdLYulMouqG0iOcuyTPzr4f1S0pb5RavVfy2GWRlAMacX/S6BZmk5LTscwnQ34ogaIeiP5L8/46Hx7NMqZ0XPIabLIkWpj3feP2DTcknPTV1Di8arHPxS5NUHMnwh1KuKSO1L+cRgOm4m78rbv3GdN7M9BINY+W8xxF0cVzwN0aqIq6W6vG9GRpz82QhJR62cySyD010U2e+h/of2LE/AfoOcTou6h/rrJ4vWCNwm94mvbpqbD/IhMsLboaRiCVpaeSXGCdlBdZQN35AKz0130EoNjHPZb7wxZqd4ej5Q/uspp3iw/yfc9YvZHe7LTUZc/NSCayQ="
+  on:
+    tags: true

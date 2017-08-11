@@ -11,4 +11,3 @@ setup(name='simple_json_logger',
       author='Diogo Magalhães Martins',
       author_email='magalhaesmartins@icloud.com',
       keywords='logging json log output')
-

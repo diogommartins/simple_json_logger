@@ -4,11 +4,7 @@ import json
 import inspect
 from datetime import datetime
 from io import StringIO
-try:
-    from unittest.mock import Mock, call, patch
-except ImportError:
-    # python 2.7
-    from mock import Mock, call, patch
+from unittest.mock import Mock, call, patch
 
 from simple_json_logger import JsonLogger
 from freezegun import freeze_time
