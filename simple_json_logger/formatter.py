@@ -45,4 +45,7 @@ class JsonFormatter(logging.Formatter):
         if record.exc_text:
             msg['exc_text'] = record.exc_text
 
-        return self.serializer(msg, default=self._default_json_handler)
+        return self.serializer(msg,
+                               default=self._default_json_handler,
+                               **record.serializer_kwargs)
+

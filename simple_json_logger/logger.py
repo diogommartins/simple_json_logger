@@ -17,6 +17,7 @@ class LogRecord(logging.LogRecord):
                                         args, exc_info, func, sinfo)
         self.extra = kwargs['extra']
         self.flatten = kwargs['flatten']
+        self.serializer_kwargs = kwargs['serializer_kwargs']
 
 
 class JsonLogger(logging.Logger):
@@ -24,16 +25,20 @@ class JsonLogger(logging.Logger):
                  level=logging.DEBUG,
                  serializer=json.dumps,
                  stream=None,
-                 flatten=False):
+                 flatten=False,
+                 serializer_kwargs={}):
         """
         :type name: str
         :type level: int
         :type serializer: callable
         :param flatten: Same as passing flatten=True to all log method calls
+        :type serializer_kwargs: dict
+        :param serializer_kwargs: Arguments to be passed when calling serializer
         """
         super(JsonLogger, self).__init__(name, level)
         self.serializer = serializer
         self.flatten = flatten
+        self.serializer_kwargs = serializer_kwargs
 
         if stream:
             handler = self._make_handler(level=level, stream=stream)
@@ -68,11 +73,6 @@ class JsonLogger(logging.Logger):
 
         return handler
 
-    def makeRecord(self, name, level, fn, lno, msg, args, exc_info,
-                   func=None, extra=None, sinfo=None):
-        return LogRecord(name, level, fn, lno, msg, args, exc_info, func, sinfo,
-                         extra=extra)
-
     def _log(self,
              level,
              msg,
@@ -80,7 +80,8 @@ class JsonLogger(logging.Logger):
              exc_info=None,
              extra=None,
              stack_info=False,
-             flatten=False):
+             flatten=False,
+             serializer_kwargs={}):
         """
         Low-level logging routine which creates a LogRecord and then calls
         all the handlers of this logger to handle the record.
@@ -103,6 +104,19 @@ class JsonLogger(logging.Logger):
                 exc_info = (type(exc_info), exc_info, exc_info.__traceback__)
             elif not isinstance(exc_info, tuple):
                 exc_info = sys.exc_info()
-        record = LogRecord(self.name, level, fn, lno, msg, args, exc_info,
-                           func, sinfo, extra=extra, flatten=flatten or self.flatten)
+
+        record = LogRecord(
+            name=self.name,
+            level=level,
+            pathname=fn,
+            lineno=lno,
+            msg=msg,
+            args=args,
+            exc_info=exc_info,
+            func=func,
+            sinfo=sinfo,
+            extra=extra,
+            flatten=flatten or self.flatten,
+            serializer_kwargs=serializer_kwargs or self.serializer_kwargs
+        )
         self.handle(record)
