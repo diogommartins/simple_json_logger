@@ -181,6 +181,48 @@ logger.info({'logged_at': 'Yesterday'}, flatten=True)
 >>> {"logged_at": "Yesterday", "line_number": 6, "function": "<module>", "level": "INFO", "path": "/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
 ```
 
+### Serializer options
+
+`serializer_kwargs` is available both as instance attribute and as
+a log method parameter and may be used to pass keyword arguments to the
+`serializer` function. (See more: https://docs.python.org/3/library/json.html)
+
+For pretty printing the output, you may use the `indent` kwarg. Ex.:
+
+```python
+from simple_json_logger import JsonLogger
+
+
+logger = JsonLogger(serializer_kwargs={'indent': 4})
+
+logger.info({'artist': 'Black Country Communion', 'song': 'Cold'})
+
+```
+Would result in a pretty indented output:
+
+``` javascript
+{
+    "logged_at": "2017-08-11T21:04:21.559070",
+    "line_number": 5,
+    "function": "<module>",
+    "level": "INFO",
+    "file_path": "/Users/diogo/Library/Preferences/PyCharm2017.1/scratches/scratch_32.py",
+    "msg": {
+        "artist": "Black Country Communion",
+        "song": "Cold"
+    }
+}
+```
+
+The same result can be achieved making a log call with `serializer_kwargs`
+as a parameter.
+
+```python
+logger.warning({'artist': 'Black Country Communion', 'song': 'Cold'},
+               serializer_kwargs={'indent': 4})
+```
+
+
 ## Compatibility
 
 It is granted to work and tested on python >=3.3. Even through it's
@@ -188,4 +230,4 @@ untested, it probably works on python 2.7, but use at your own risk.
 
 ## Depencencies
 
-Has none
+Has none.
