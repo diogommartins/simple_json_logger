@@ -178,7 +178,7 @@ class LoggerTests(unittest.TestCase):
 
         self.assertEqual(message, logged_content['msg'])
 
-    def test_flatten_instance_parameter_adds_messages_to_document_root(self):
+    def test_flatten_instance_attr_adds_messages_to_document_root(self):
         self.logger.flatten = True
 
         message = {'The Jeff Healey Band': 'Cruel Little Number'}
@@ -187,7 +187,7 @@ class LoggerTests(unittest.TestCase):
 
         self.assertDictContainsSubset(message, logged_content)
 
-    def test_flatten_instance_parameter_overwrites_default_attributes(self):
+    def test_flatten_instance_attr_overwrites_default_attributes(self):
         self.logger.flatten = True
 
         message = {'logged_at': 'Yesterday'}
@@ -195,3 +195,35 @@ class LoggerTests(unittest.TestCase):
         logged_content = json.loads(self.buffer.getvalue())
 
         self.assertEqual(message['logged_at'], logged_content['logged_at'])
+
+    def test_it_forwards_serializer_kwargs_parameter_to_serializer(self):
+        message = {
+            'logged_at': 'Yesterday',
+            'line_number': 1,
+            'function': 'print',
+            'level': 'easy',
+            'file_path': 'Somewhere over the rainbow'
+        }
+        self.logger.info(message, flatten=True, serializer_kwargs={'indent': 2})
+
+        logged_content = self.buffer.getvalue()
+        expected_content = json.dumps(message, indent=2)
+
+        self.assertEqual(logged_content, expected_content + '\n')
+
+    def test_it_forwards_serializer_kwargs_instance_attr_to_serializer(self):
+        self.logger.serializer_kwargs = {'indent': 2}
+
+        message = {
+            'logged_at': 'Yesterday',
+            'line_number': 1,
+            'function': 'print',
+            'level': 'easy',
+            'file_path': 'Somewhere over the rainbow'
+        }
+        self.logger.info(message, flatten=True)
+
+        logged_content = self.buffer.getvalue()
+        expected_content = json.dumps(message, indent=2)
+
+        self.assertEqual(logged_content, expected_content + '\n')
