@@ -1,11 +1,16 @@
 import logging
+try:
+    from logging import _levelToName
+except ImportError:
+    from logging import _levelNames as _levelToName
+
 import datetime
 import traceback
 from inspect import istraceback
 
 
 class JsonFormatter(logging.Formatter):
-    level_to_name_mapping = logging._levelToName
+    level_to_name_mapping = _levelToName
 
     def __init__(self, serializer):
         super(JsonFormatter, self).__init__()
