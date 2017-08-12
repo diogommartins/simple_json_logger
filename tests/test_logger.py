@@ -196,6 +196,7 @@ class LoggerTests(unittest.TestCase):
 
         self.assertEqual(message['logged_at'], logged_content['logged_at'])
 
+    @patch('logging.StreamHandler.terminator', '')
     def test_it_forwards_serializer_kwargs_parameter_to_serializer(self):
         message = {
             'logged_at': 'Yesterday',
@@ -209,8 +210,9 @@ class LoggerTests(unittest.TestCase):
         logged_content = self.buffer.getvalue()
         expected_content = json.dumps(message, indent=2)
 
-        self.assertEqual(logged_content, expected_content + '\n')
+        self.assertEqual(logged_content, expected_content)
 
+    @patch('logging.StreamHandler.terminator', '')
     def test_it_forwards_serializer_kwargs_instance_attr_to_serializer(self):
         self.logger.serializer_kwargs = {'indent': 2}
 
@@ -226,4 +228,4 @@ class LoggerTests(unittest.TestCase):
         logged_content = self.buffer.getvalue()
         expected_content = json.dumps(message, indent=2)
 
-        self.assertEqual(logged_content, expected_content + '\n')
+        self.assertEqual(logged_content, expected_content)
