@@ -257,18 +257,6 @@ class LoggerTests(unittest.TestCase):
         self.assertEqual(logged_content['dog'], 'Xablau')
         self.assertEqual(logged_content['ham'], 'eggs')
 
-    def test_extra_parameter_executes_callable_values(self):
-        logger = JsonLogger(level=logging.DEBUG,
-                            stream=self.buffer,
-                            extra={'dog': 'Xablau'})
-        message = {'log_message': 'Xena'}
-        logger.info(message)
-
-        logged_content = json.loads(self.buffer.getvalue())
-
-        self.assertEqual(logged_content['msg']['log_message'], 'Xena')
-        self.assertEqual(logged_content['dog'], 'Xablau')
-
     def test_callable_values_are_called_before_serialization(self):
         a_callable = Mock(return_value="I'm a callable that returns a string!")
 
