@@ -134,6 +134,21 @@ logger.info("I'm a simple log", extra={'logged_at': 'Yesterday'})
 >>> {"msg": "I'm a simple log", "logged_at": "Yesterday", "line_number": 6, "function": "<module>", "level": "INFO", "path": "/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
 ```
 
+and it may also be used as an instance attribute:
+
+``` python
+from simple_json_logger import JsonLogger
+
+
+logger = JsonLogger(extra={'logged_at': 'Yesterday'})
+
+logger.info("I'm a simple log")
+>>> {"msg": "I'm a simple log", "logged_at": "Yesterday", "line_number": 6, "function": "<module>", "level": "INFO", "path": "/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
+
+logger.info("I'm a simple log")
+>>> {"msg": "I'm a simple log", "logged_at": "Yesterday", "line_number": 6, "function": "<module>", "level": "INFO", "path": "/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
+```
+
 #### Flatten
 
 Alternatively, this behavior may be achieved using `flatten`. Which is

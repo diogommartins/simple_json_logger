@@ -231,3 +231,40 @@ class LoggerTests(unittest.TestCase):
         expected_content = json.dumps(message, **self.logger.serializer_kwargs)
 
         self.assertEqual(logged_content, expected_content)
+
+    def test_extra_parameter_adds_content_to_root_of_all_messages(self):
+        logger = JsonLogger(level=logging.DEBUG,
+                            stream=self.buffer,
+                            extra={'dog': 'Xablau'})
+        message = {'log_message': 'Xena'}
+        logger.info(message)
+
+        logged_content = json.loads(self.buffer.getvalue())
+        
+        self.assertEqual(logged_content['msg']['log_message'], 'Xena')
+        self.assertEqual(logged_content['dog'], 'Xablau')
+
+    def test_extra_parameter_on_log_method_function_call_updates_extra_parameter_on_init(self):
+        logger = JsonLogger(level=logging.DEBUG,
+                            stream=self.buffer,
+                            extra={'dog': 'Xablau'})
+        message = {'log_message': 'Xena'}
+        logger.info(message, extra={"ham": "eggs"})
+
+        logged_content = json.loads(self.buffer.getvalue())
+
+        self.assertEqual(logged_content['msg']['log_message'], 'Xena')
+        self.assertEqual(logged_content['dog'], 'Xablau')
+        self.assertEqual(logged_content['ham'], 'eggs')
+
+    def test_extra_parameter_executes_callable_values(self):
+        logger = JsonLogger(level=logging.DEBUG,
+                            stream=self.buffer,
+                            extra={'dog': 'Xablau'})
+        message = {'log_message': 'Xena'}
+        logger.info(message)
+
+        logged_content = json.loads(self.buffer.getvalue())
+
+        self.assertEqual(logged_content['msg']['log_message'], 'Xena')
+        self.assertEqual(logged_content['dog'], 'Xablau')
