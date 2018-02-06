@@ -57,7 +57,7 @@ class LoggerTests(unittest.TestCase):
 
     @freeze_time("2017-03-31 04:20:00")
     def test_it_logs_current_log_time(self):
-        now = datetime.now().isoformat()
+        now = datetime.now().strftime(formatter.DATETIME_FORMAT)
 
         self.logger.error("Batemos tambores, eles panela.")
 
