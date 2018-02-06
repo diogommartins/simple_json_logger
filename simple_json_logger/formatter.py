@@ -4,9 +4,19 @@ try:
 except ImportError:
     from logging import _levelNames as _levelToName
 
-import datetime
 import traceback
+from datetime import datetime
 from inspect import istraceback
+
+
+DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
+
+LOGGED_AT_FIELDNAME = 'logged_at'
+LINE_NUMBER_FIELDNAME = 'line_number'
+FUNCTION_NAME_FIELDNAME = 'function'
+LOG_LEVEL_FIELDNAME = 'level'
+MSG_FIELDNAME = 'msg'
+FILE_PATH_FIELDNAME = 'file_path'
 
 
 class JsonFormatter(logging.Formatter):
@@ -18,8 +28,8 @@ class JsonFormatter(logging.Formatter):
 
     @staticmethod
     def _default_json_handler(obj):
-        if isinstance(obj, (datetime.date, datetime.time)):
-            return obj.isoformat()
+        if isinstance(obj, datetime):
+            return obj.strftime(DATETIME_FORMAT)
         elif istraceback(obj):
             tb = ''.join(traceback.format_tb(obj))
             return tb.strip()
@@ -31,19 +41,19 @@ class JsonFormatter(logging.Formatter):
 
     def format(self, record):
         msg = {
-            'logged_at': datetime.datetime.now().isoformat(),
-            'line_number': record.lineno,
-            'function': record.funcName,
-            'level': self.level_to_name_mapping[record.levelno],
-            'file_path': record.pathname
+            LOGGED_AT_FIELDNAME: datetime.now().strftime(DATETIME_FORMAT),
+            LINE_NUMBER_FIELDNAME: record.lineno,
+            FUNCTION_NAME_FIELDNAME: record.funcName,
+            LOG_LEVEL_FIELDNAME: self.level_to_name_mapping[record.levelno],
+            FILE_PATH_FIELDNAME: record.pathname
         }
         if record.flatten:
             if isinstance(record.msg, dict):
                 msg.update(record.msg)
             else:
-                msg['msg'] = record.msg
+                msg[MSG_FIELDNAME] = record.msg
         else:
-            msg['msg'] = record.msg
+            msg[MSG_FIELDNAME] = record.msg
 
         if record.extra:
             msg.update(record.extra)
@@ -55,4 +65,3 @@ class JsonFormatter(logging.Formatter):
         return self.serializer(msg,
                                default=self._default_json_handler,
                                **record.serializer_kwargs)
-

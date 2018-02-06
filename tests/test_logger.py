@@ -6,7 +6,7 @@ from datetime import datetime
 from io import StringIO
 from unittest.mock import Mock, call, patch
 
-from simple_json_logger import JsonLogger
+from simple_json_logger import JsonLogger, formatter
 from freezegun import freeze_time
 
 
@@ -57,7 +57,7 @@ class LoggerTests(unittest.TestCase):
 
     @freeze_time("2017-03-31 04:20:00")
     def test_it_logs_current_log_time(self):
-        now = datetime.now().isoformat()
+        now = datetime.now().strftime(formatter.DATETIME_FORMAT)
 
         self.logger.error("Batemos tambores, eles panela.")
 
@@ -100,7 +100,7 @@ class LoggerTests(unittest.TestCase):
         expected_output = {
             'date': message['date'].isoformat(),
             'time': message['time'].isoformat(),
-            'datetime': message['datetime'].isoformat()
+            'datetime': message['datetime'].strftime(formatter.DATETIME_FORMAT)
         }
         self.assertDictEqual(json_log['msg'], expected_output)
 
