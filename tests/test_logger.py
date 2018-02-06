@@ -6,7 +6,7 @@ from datetime import datetime
 from io import StringIO
 from unittest.mock import Mock, call, patch
 
-from simple_json_logger import JsonLogger
+from simple_json_logger import JsonLogger, formatter
 from freezegun import freeze_time
 
 
@@ -100,7 +100,7 @@ class LoggerTests(unittest.TestCase):
         expected_output = {
             'date': message['date'].isoformat(),
             'time': message['time'].isoformat(),
-            'datetime': message['datetime'].isoformat()
+            'datetime': message['datetime'].strftime(formatter.DATETIME_FORMAT)
         }
         self.assertDictEqual(json_log['msg'], expected_output)
 
@@ -256,18 +256,6 @@ class LoggerTests(unittest.TestCase):
         self.assertEqual(logged_content['msg']['log_message'], 'Xena')
         self.assertEqual(logged_content['dog'], 'Xablau')
         self.assertEqual(logged_content['ham'], 'eggs')
-
-    def test_extra_parameter_executes_callable_values(self):
-        logger = JsonLogger(level=logging.DEBUG,
-                            stream=self.buffer,
-                            extra={'dog': 'Xablau'})
-        message = {'log_message': 'Xena'}
-        logger.info(message)
-
-        logged_content = json.loads(self.buffer.getvalue())
-
-        self.assertEqual(logged_content['msg']['log_message'], 'Xena')
-        self.assertEqual(logged_content['dog'], 'Xablau')
 
     def test_callable_values_are_called_before_serialization(self):
         a_callable = Mock(return_value="I'm a callable that returns a string!")
