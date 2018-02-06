@@ -25,6 +25,8 @@ class JsonFormatter(logging.Formatter):
             return tb.strip()
         elif isinstance(obj, Exception):
             return "Exception: %s" % str(obj)
+        elif callable(obj):
+            return obj()
         return str(obj)
 
     def format(self, record):

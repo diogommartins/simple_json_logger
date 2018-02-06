@@ -26,7 +26,8 @@ class JsonLogger(logging.Logger):
                  serializer=json.dumps,
                  stream=None,
                  flatten=False,
-                 serializer_kwargs={}):
+                 serializer_kwargs=None,
+                 extra=None):
         """
         :type name: str
         :type level: int
@@ -34,11 +35,20 @@ class JsonLogger(logging.Logger):
         :param flatten: Same as passing flatten=True to all log method calls
         :type serializer_kwargs: dict
         :param serializer_kwargs: Arguments to be passed when calling serializer
+        :type extra: dict
+        :param extra: Items to be inserted on every logged messages.
         """
         super(JsonLogger, self).__init__(name, level)
         self.serializer = serializer
         self.flatten = flatten
+
+        if serializer_kwargs is None:
+            serializer_kwargs = {}
         self.serializer_kwargs = serializer_kwargs
+
+        if extra is None:
+            extra = {}
+        self.extra = extra
 
         if stream:
             handler = self._make_handler(level=level, stream=stream)
@@ -105,6 +115,12 @@ class JsonLogger(logging.Logger):
             elif not isinstance(exc_info, tuple):
                 exc_info = sys.exc_info()
 
+        joined_extra = {}
+        joined_extra.update(self.extra)
+
+        if extra:
+            joined_extra.update(extra)
+
         record = LogRecord(
             name=self.name,
             level=level,
@@ -115,7 +131,7 @@ class JsonLogger(logging.Logger):
             exc_info=exc_info,
             func=func,
             sinfo=sinfo,
-            extra=extra,
+            extra=joined_extra,
             flatten=flatten or self.flatten,
             serializer_kwargs=serializer_kwargs or self.serializer_kwargs
         )
