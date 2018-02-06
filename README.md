@@ -92,6 +92,24 @@ logger.info({
 >>> {"msg": {"date_objects": "2017-03-31T03:17:33.898880", "exceptions": "Exception: 'Boooom'", "types": "<class 'simple_json_logger.logger.JsonLogger'>"}, "logged_at": "2017-03-31T03:17:33.900136", "line_number": 8, "function": "<module>", "level": "INFO", "file_path": "/Volumes/partition2/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
 ```
 
+`Callable[[], str]` log values may also be used to generate dynamic content that
+are evaluated at serialization time:
+
+```python
+from random import randint
+from simple_json_logger import JsonLogger
+
+
+logger = JsonLogger(extra={"random_number": lambda: randint(1, 100)})
+
+logger.info("First log line")
+# {"logged_at": "2018-02-06T13:55:35.439355", "line_number": 1, "function": "<module>", "level": "INFO", "file_path": "<input>", "msg": "First log line", "random_number": 6}
+
+logger.info("Second log line")
+# {"logged_at": "2018-02-06T13:55:35.439590", "line_number": 2, "function": "<module>", "level": "INFO", "file_path": "<input>", "msg": "Second log line", "random_number": 48}
+
+``` 
+
 ### Adding content to root
 
 By default, everything passed to the log methods is inserted inside

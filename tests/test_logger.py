@@ -268,3 +268,10 @@ class LoggerTests(unittest.TestCase):
 
         self.assertEqual(logged_content['msg']['log_message'], 'Xena')
         self.assertEqual(logged_content['dog'], 'Xablau')
+
+    def test_callable_values_are_called_before_serialization(self):
+        a_callable = Mock(return_value="I'm a callable that returns a string!")
+
+        self.logger.info(a_callable)
+        logged_content = json.loads(self.buffer.getvalue())
+        self.assertEqual(logged_content['msg'], a_callable.return_value)
