@@ -57,7 +57,7 @@ class LoggerTests(unittest.TestCase):
 
     @freeze_time("2017-03-31 04:20:00")
     def test_it_logs_current_log_time(self):
-        now = datetime.now().isoformat()
+        now = datetime.now().strftime(formatter.DATETIME_FORMAT)
 
         self.logger.error("Batemos tambores, eles panela.")
 
@@ -78,12 +78,11 @@ class LoggerTests(unittest.TestCase):
         json_log = json.loads(logged_content)
 
         exc_class, exc_message, exc_traceback = json_log['exc_info']
-        self.assertIn(member=exception_message,
-                      container=exc_message)
+        self.assertEqual(f'Exception: {exception_message}', exc_message)
 
         current_func_name = inspect.currentframe().f_code.co_name
-        self.assertIn(member=current_func_name,
-                      container=exc_traceback)
+        self.assertIn(current_func_name, exc_traceback[0])
+        self.assertIn('raise Exception(exception_message)', exc_traceback[1])
 
     def test_it_logs_datetime_objects(self):
         message = {

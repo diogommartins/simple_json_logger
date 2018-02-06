@@ -4,8 +4,8 @@ try:
 except ImportError:
     from logging import _levelNames as _levelToName
 
-import datetime
 import traceback
+from datetime import datetime
 from inspect import istraceback
 
 
@@ -15,6 +15,7 @@ LOGGED_AT_FIELDNAME = 'logged_at'
 LINE_NUMBER_FIELDNAME = 'line_number'
 FUNCTION_NAME_FIELDNAME = 'function'
 LOG_LEVEL_FIELDNAME = 'level'
+MSG_FIELDNAME = 'msg'
 FILE_PATH_FIELDNAME = 'file_path'
 
 
@@ -27,11 +28,11 @@ class JsonFormatter(logging.Formatter):
 
     @staticmethod
     def _default_json_handler(obj):
-        if isinstance(obj, datetime.datetime):
+        if isinstance(obj, datetime):
             return obj.strftime(DATETIME_FORMAT)
         elif istraceback(obj):
             tb = ''.join(traceback.format_tb(obj))
-            return tb.strip()
+            return tb.strip().split('\n')
         elif isinstance(obj, Exception):
             return "Exception: %s" % str(obj)
         elif callable(obj):
@@ -40,7 +41,7 @@ class JsonFormatter(logging.Formatter):
 
     def format(self, record):
         msg = {
-            LOGGED_AT_FIELDNAME: datetime.datetime.now().isoformat(),
+            LOGGED_AT_FIELDNAME: datetime.now().strftime(DATETIME_FORMAT),
             LINE_NUMBER_FIELDNAME: record.lineno,
             FUNCTION_NAME_FIELDNAME: record.funcName,
             LOG_LEVEL_FIELDNAME: self.level_to_name_mapping[record.levelno],
@@ -50,9 +51,9 @@ class JsonFormatter(logging.Formatter):
             if isinstance(record.msg, dict):
                 msg.update(record.msg)
             else:
-                msg['msg'] = record.msg
+                msg[MSG_FIELDNAME] = record.msg
         else:
-            msg['msg'] = record.msg
+            msg[MSG_FIELDNAME] = record.msg
 
         if record.extra:
             msg.update(record.extra)
