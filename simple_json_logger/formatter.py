@@ -9,6 +9,15 @@ import traceback
 from inspect import istraceback
 
 
+DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
+
+LOGGED_AT_FIELDNAME = 'logged_at'
+LINE_NUMBER_FIELDNAME = 'line_number'
+FUNCTION_NAME_FIELDNAME = 'function'
+LOG_LEVEL_FIELDNAME = 'level'
+FILE_PATH_FIELDNAME = 'file_path'
+
+
 class JsonFormatter(logging.Formatter):
     level_to_name_mapping = _levelToName
 
@@ -18,8 +27,8 @@ class JsonFormatter(logging.Formatter):
 
     @staticmethod
     def _default_json_handler(obj):
-        if isinstance(obj, (datetime.date, datetime.time)):
-            return obj.isoformat()
+        if isinstance(obj, datetime.datetime):
+            return obj.strftime(DATETIME_FORMAT)
         elif istraceback(obj):
             tb = ''.join(traceback.format_tb(obj))
             return tb.strip()
@@ -31,11 +40,11 @@ class JsonFormatter(logging.Formatter):
 
     def format(self, record):
         msg = {
-            'logged_at': datetime.datetime.now().isoformat(),
-            'line_number': record.lineno,
-            'function': record.funcName,
-            'level': self.level_to_name_mapping[record.levelno],
-            'file_path': record.pathname
+            LOGGED_AT_FIELDNAME: datetime.datetime.now().isoformat(),
+            LINE_NUMBER_FIELDNAME: record.lineno,
+            FUNCTION_NAME_FIELDNAME: record.funcName,
+            LOG_LEVEL_FIELDNAME: self.level_to_name_mapping[record.levelno],
+            FILE_PATH_FIELDNAME: record.pathname
         }
         if record.flatten:
             if isinstance(record.msg, dict):
@@ -55,4 +64,3 @@ class JsonFormatter(logging.Formatter):
         return self.serializer(msg,
                                default=self._default_json_handler,
                                **record.serializer_kwargs)
-
