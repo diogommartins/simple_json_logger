@@ -45,6 +45,9 @@ class JsonLogger(logging.Logger):
         if serializer_kwargs is None:
             serializer_kwargs = {}
         self.serializer_kwargs = serializer_kwargs
+
+        if extra is None:
+            extra = {}
         self.extra = extra
 
         if stream:
@@ -113,8 +116,8 @@ class JsonLogger(logging.Logger):
                 exc_info = sys.exc_info()
 
         joined_extra = {}
-        if self.extra:
-            joined_extra.update(self.extra)
+        joined_extra.update(self.extra)
+
         if extra:
             joined_extra.update(extra)
 
