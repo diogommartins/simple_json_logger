@@ -1,7 +1,7 @@
 import logging
 try:
     from logging import _levelToName
-except ImportError:
+except ImportError:  # pragma: no cover
     from logging import _levelNames as _levelToName
 
 import traceback
