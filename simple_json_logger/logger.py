@@ -27,7 +27,8 @@ class JsonLogger(logging.Logger):
                  stream=None,
                  flatten=False,
                  serializer_kwargs=None,
-                 extra=None):
+                 extra=None,
+                 exclude_fields=None):
         """
         :type name: str
         :type level: int
@@ -41,7 +42,8 @@ class JsonLogger(logging.Logger):
         super(JsonLogger, self).__init__(name, level)
         self.serializer = serializer
         self.flatten = flatten
-        self.formatter = JsonFormatter(self.serializer)
+
+        self.formatter = JsonFormatter(self.serializer, exclude_fields)
 
         if serializer_kwargs is None:
             serializer_kwargs = {}
