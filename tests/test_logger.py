@@ -78,7 +78,7 @@ class LoggerTests(unittest.TestCase):
         json_log = json.loads(logged_content)
 
         exc_class, exc_message, exc_traceback = json_log['exc_info']
-        self.assertEqual(f'Exception: {exception_message}', exc_message)
+        self.assertEqual('Exception: {}'.format(exception_message), exc_message)
 
         current_func_name = inspect.currentframe().f_code.co_name
         self.assertIn(current_func_name, exc_traceback[0])
