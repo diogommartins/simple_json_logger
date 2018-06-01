@@ -214,6 +214,25 @@ logger.info({'logged_at': 'Yesterday'}, flatten=True)
 >>> {"logged_at": "Yesterday", "line_number": 6, "function": "<module>", "level": "INFO", "path": "/Users/diogo/PycharmProjects/simple_json_logger/bla.py"}
 ```
 
+#### Exclude default logger fields
+
+If you think that the default fields are too much, it's also possible to 
+exclude fields from the output message. 
+
+``` python
+from simple_json_logger import JsonLogger
+from simple_json_logger.formatter import FUNCTION_NAME_FIELDNAME, LOGGED_AT_FIELDNAME
+
+
+logger = JsonLogger(exclude_fields=[FUNCTION_NAME_FIELDNAME,
+                                    LOGGED_AT_FIELDNAME,
+                                    'file_path',
+                                    'line_number'])
+logger.info("Function, file path and line number wont be printed")
+>>> {"level": "INFO", "msg": "Function, file path and line number wont be printed"}
+
+```
+
 ### Serializer options
 
 `serializer_kwargs` is available both as instance attribute and as
