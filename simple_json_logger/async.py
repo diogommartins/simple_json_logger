@@ -4,6 +4,8 @@ import logging
 import sys
 from asyncio.streams import StreamWriter
 from asyncio.unix_events import _set_nonblocking
+from io import TextIOBase
+from typing import Type
 
 from simple_json_logger.logger import BaseJsonLogger, StdoutFilter
 
@@ -80,6 +82,21 @@ class AsyncJsonLogger(BaseJsonLogger):
                                   handler_cls=AsyncStreamHandler)
 
     @classmethod
+    async def make_stream_writer(cls,
+                                 protocol_factory: Type[asyncio.Protocol],
+                                 pipe: TextIOBase,
+                                 loop) -> StreamWriter:
+        loop = loop or asyncio.get_event_loop()
+
+        _set_nonblocking(pipe.fileno())
+        transport, protocol = await loop.connect_write_pipe(protocol_factory,
+                                                            pipe)
+        return StreamWriter(transport=transport,
+                            protocol=protocol,
+                            reader=None,
+                            loop=loop)
+
+    @classmethod
     async def init_async(cls, *,
                          loop=None,
                          name='json_logger',
@@ -90,24 +107,17 @@ class AsyncJsonLogger(BaseJsonLogger):
                          extra=None):
         loop = loop or asyncio.get_event_loop()
 
-        _set_nonblocking(sys.stderr.fileno())
-        _set_nonblocking(sys.stdout.fileno())
+        stdout_writer = await cls.make_stream_writer(
+            protocol_factory=StdoutProtocol,
+            pipe=sys.stdout,
+            loop=loop
+        )
 
-        stdout_write_pipe = loop.connect_write_pipe(StdoutProtocol, sys.stdout)
-        stdout_transport, stdout_protocol = await stdout_write_pipe
-
-        stdout_writer = StreamWriter(transport=stdout_transport,
-                                     protocol=stdout_protocol,
-                                     reader=None,
-                                     loop=loop)
-
-        stderr_write_pipe = loop.connect_write_pipe(StderrProtocol, sys.stderr)
-        stderr_transport, stderr_protocol = await stderr_write_pipe
-
-        stderr_writer = StreamWriter(transport=stderr_transport,
-                                     protocol=stderr_protocol,
-                                     reader=None,
-                                     loop=loop)
+        stderr_writer = await cls.make_stream_writer(
+            protocol_factory=StderrProtocol,
+            pipe=sys.stderr,
+            loop=loop
+        )
 
         return cls(
             loop=loop,
