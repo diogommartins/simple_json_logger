@@ -1,7 +1,7 @@
 import logging
 try:
     from logging import _levelToName
-except ImportError:
+except ImportError:  # pragma: no cover
     from logging import _levelNames as _levelToName
 
 import traceback
@@ -47,7 +47,7 @@ class JsonFormatter(logging.Formatter):
             return obj.strftime(DATETIME_FORMAT)
         elif istraceback(obj):
             tb = ''.join(traceback.format_tb(obj))
-            return tb.strip()
+            return tb.strip().split('\n')
         elif isinstance(obj, Exception):
             return "Exception: %s" % str(obj)
         elif callable(obj):
