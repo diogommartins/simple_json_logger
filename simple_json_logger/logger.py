@@ -1,3 +1,4 @@
+import abc
 import sys
 import json
 import logging
@@ -20,11 +21,10 @@ class LogRecord(logging.LogRecord):
         self.serializer_kwargs = kwargs['serializer_kwargs']
 
 
-class JsonLogger(logging.Logger):
+class BaseJsonLogger(logging.Logger, metaclass=abc.ABCMeta):
     def __init__(self, name='json_logger',
                  level=logging.DEBUG,
                  serializer=json.dumps,
-                 stream=None,
                  flatten=False,
                  serializer_kwargs=None,
                  extra=None,
@@ -39,7 +39,8 @@ class JsonLogger(logging.Logger):
         :type extra: dict
         :param extra: Items to be inserted on every logged messages.
         """
-        super(JsonLogger, self).__init__(name, level)
+
+        super(BaseJsonLogger, self).__init__(name, level)
         self.serializer = serializer
         self.flatten = flatten
 
@@ -53,15 +54,86 @@ class JsonLogger(logging.Logger):
             extra = {}
         self.extra = extra
 
+    def make_log_record(self,
+                        level,
+                        msg,
+                        args,
+                        exc_info=None,
+                        extra=None,
+                        stack_info=False,
+                        flatten=False,
+                        serializer_kwargs={}):
+        sinfo = None
+        if logging._srcfile:
+            # IronPython doesn't track Python frames, so findCaller raises an
+            # exception on some versions of IronPython. We trap it here so that
+            # IronPython can use logging.
+            try:
+                fn, lno, func, sinfo = self.findCaller(stack_info)
+            except ValueError:  # pragma: no cover
+                fn, lno, func = "(unknown file)", 0, "(unknown function)"
+        else:  # pragma: no cover
+            fn, lno, func = "(unknown file)", 0, "(unknown function)"
+        if exc_info:
+            if isinstance(exc_info, BaseException):
+                exc_info = (type(exc_info), exc_info, exc_info.__traceback__)
+            elif not isinstance(exc_info, tuple):
+                exc_info = sys.exc_info()
+
+        joined_extra = {}
+        joined_extra.update(self.extra)
+
+        if extra:
+            joined_extra.update(extra)
+
+        return LogRecord(
+            name=self.name,
+            level=level,
+            pathname=fn,
+            lineno=lno,
+            msg=msg,
+            args=args,
+            exc_info=exc_info,
+            func=func,
+            sinfo=sinfo,
+            extra=joined_extra,
+            flatten=flatten or self.flatten,
+            serializer_kwargs=serializer_kwargs or self.serializer_kwargs
+        )
+
+    def _make_handler(self, level, stream, handler_cls=logging.StreamHandler):
+        """
+        :rtype: logging.StreamHandler
+        """
+        handler = handler_cls(stream)
+        handler.setLevel(level)
+        handler.setFormatter(self.formatter)
+
+        return handler
+
+
+class JsonLogger(BaseJsonLogger):
+    def __init__(self,
+                 name='json_logger',
+                 level=logging.DEBUG,
+                 serializer=json.dumps,
+                 stream=None,
+                 flatten=False,
+                 serializer_kwargs=None,
+                 extra=None,
+                 exclude_fields=None):
+        super(JsonLogger, self).__init__(name, level, serializer, flatten,
+                                         serializer_kwargs, extra,
+                                         exclude_fields)
         if stream:
             handler = self._make_handler(level=level, stream=stream)
             self.addHandler(handler)
         else:
-            self.addHandler(self._stdout_handler)
-            self.addHandler(self._stderr_handler)
+            self.addHandler(self.__stdout_handler)
+            self.addHandler(self.__stderr_handler)
 
     @property
-    def _stdout_handler(self):
+    def __stdout_handler(self):
         """
         :rtype: logging.StreamHandler
         """
@@ -70,21 +142,11 @@ class JsonLogger(logging.Logger):
         return handler
 
     @property
-    def _stderr_handler(self):
+    def __stderr_handler(self):
         """
         :rtype: logging.StreamHandler
         """
         return self._make_handler(level=logging.WARNING, stream=sys.stderr)
-
-    def _make_handler(self, level, stream):
-        """
-        :rtype: logging.StreamHandler
-        """
-        handler = logging.StreamHandler(stream)
-        handler.setLevel(level)
-        handler.setFormatter(self.formatter)
-
-        return handler
 
     def _log(self,
              level,
@@ -101,41 +163,6 @@ class JsonLogger(logging.Logger):
 
         Overwritten to properly handle log methods kwargs
         """
-        sinfo = None
-        if logging._srcfile:
-            #IronPython doesn't track Python frames, so findCaller raises an
-            #exception on some versions of IronPython. We trap it here so that
-            #IronPython can use logging.
-            try:
-                fn, lno, func, sinfo = self.findCaller(stack_info)
-            except ValueError: # pragma: no cover
-                fn, lno, func = "(unknown file)", 0, "(unknown function)"
-        else: # pragma: no cover
-            fn, lno, func = "(unknown file)", 0, "(unknown function)"
-        if exc_info:
-            if isinstance(exc_info, BaseException):
-                exc_info = (type(exc_info), exc_info, exc_info.__traceback__)
-            elif not isinstance(exc_info, tuple):
-                exc_info = sys.exc_info()
-
-        joined_extra = {}
-        joined_extra.update(self.extra)
-
-        if extra:
-            joined_extra.update(extra)
-
-        record = LogRecord(
-            name=self.name,
-            level=level,
-            pathname=fn,
-            lineno=lno,
-            msg=msg,
-            args=args,
-            exc_info=exc_info,
-            func=func,
-            sinfo=sinfo,
-            extra=joined_extra,
-            flatten=flatten or self.flatten,
-            serializer_kwargs=serializer_kwargs or self.serializer_kwargs
-        )
+        record = self.make_log_record(level, msg, args, exc_info, extra,
+                                      stack_info, flatten, serializer_kwargs)
         self.handle(record)
