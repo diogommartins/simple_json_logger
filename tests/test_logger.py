@@ -9,6 +9,9 @@ from unittest.mock import Mock, call, patch
 from simple_json_logger import JsonLogger, formatter
 from freezegun import freeze_time
 
+from simple_json_logger.formatter import FUNCTION_NAME_FIELDNAME, \
+    LOG_LEVEL_FIELDNAME
+
 
 class LoggerTests(unittest.TestCase):
     def setUp(self):
@@ -262,3 +265,17 @@ class LoggerTests(unittest.TestCase):
         self.logger.info(a_callable)
         logged_content = json.loads(self.buffer.getvalue())
         self.assertEqual(logged_content['msg'], a_callable.return_value)
+
+    def test_default_fields_are_excludeable(self):
+        logger = JsonLogger(level=logging.DEBUG,
+                            stream=self.buffer,
+                            exclude_fields=[
+                                FUNCTION_NAME_FIELDNAME,
+                                LOG_LEVEL_FIELDNAME
+                            ])
+
+        logger.info("Xablau")
+        logged_content = json.loads(self.buffer.getvalue())
+
+        self.assertNotIn(FUNCTION_NAME_FIELDNAME, logged_content)
+        self.assertNotIn(LOG_LEVEL_FIELDNAME, logged_content)
