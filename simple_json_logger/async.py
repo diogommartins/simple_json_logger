@@ -90,7 +90,7 @@ class AsyncJsonLogger(BaseJsonLogger):
                          extra=None):
         loop = loop or asyncio.get_event_loop()
 
-        _set_nonblocking(sys.stdin.fileno())
+        _set_nonblocking(sys.stderr.fileno())
         _set_nonblocking(sys.stdout.fileno())
 
         stdout_write_pipe = loop.connect_write_pipe(StdoutProtocol, sys.stdout)
