@@ -216,8 +216,8 @@ logger.info({'logged_at': 'Yesterday'}, flatten=True)
 
 #### Exclude default logger fields
 
-If you thing that the default fields are too much, it's also possible to 
-exclusive fields from the output message. 
+If you think that the default fields are too much, it's also possible to 
+exclude fields from the output message. 
 
 ``` python
 from simple_json_logger import JsonLogger
