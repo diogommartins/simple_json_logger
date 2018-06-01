@@ -107,7 +107,7 @@ class BaseJsonLogger(logging.Logger, metaclass=abc.ABCMeta):
         """
         handler = handler_cls(stream)
         handler.setLevel(level)
-        handler.setFormatter(JsonFormatter(self.serializer))
+        handler.setFormatter(self.formatter)
 
         return handler
 
@@ -120,9 +120,11 @@ class JsonLogger(BaseJsonLogger):
                  stream=None,
                  flatten=False,
                  serializer_kwargs=None,
-                 extra=None):
+                 extra=None,
+                 exclude_fields=None):
         super(JsonLogger, self).__init__(name, level, serializer, flatten,
-                                         serializer_kwargs, extra)
+                                         serializer_kwargs, extra,
+                                         exclude_fields)
         if stream:
             handler = self._make_handler(level=level, stream=stream)
             self.addHandler(handler)
