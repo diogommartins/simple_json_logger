@@ -221,10 +221,11 @@ exclude fields from the output message.
 
 ``` python
 from simple_json_logger import JsonLogger
+from simple_json_logger.formatter import FUNCTION_NAME_FIELDNAME, LOGGED_AT_FIELDNAME
 
 
-logger = JsonLogger(exclude_fields=['function',
-                                    'logged_at',
+logger = JsonLogger(exclude_fields=[FUNCTION_NAME_FIELDNAME,
+                                    LOGGED_AT_FIELDNAME,
                                     'file_path',
                                     'line_number'])
 logger.info("Function, file path and line number wont be printed")
